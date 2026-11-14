@@ -1,0 +1,99 @@
+# Manifest corpus — Day 06 Data Ingestion
+# Chủ đề: đối soát hóa đơn và chứng từ điện tử. Corpus cuối cùng: 1 văn bản (Thông tư 91/2026/TT-BTC).
+
+corpus:
+  topic: "Hóa đơn điện tử, chứng từ điện tử (đối soát hóa đơn và chứng từ kế toán)"
+  language: vi
+  min_content_pages: 30
+  content_pages_total: 32
+  counted_pages_rule: >-
+    Đếm trang vật lý của PDF thuộc thân văn bản (Chương I-V, Điều 1-25) có OCR đọc được.
+    Loại trang chỉ có khoản cuối + Nơi nhận + chữ ký/con dấu (trang 33) và phụ lục biểu mẫu/bảng (trang 34-97)
+    vì OCR nhiễu nhiều. Không có bìa, mục lục hay trang trống riêng.
+  filter_field: "chapter (I-V), suy từ số Điều theo bảng Chương->Điều đọc trên PDF; xem benchmark/README.md"
+
+documents:
+  - source_id: TT-91-2026
+    title: >-
+      Thông tư quy định một số điều của Luật Quản lý thuế và Nghị định số 254/2026/NĐ-CP
+      của Chính phủ quy định chi tiết một số điều và biện pháp để tổ chức, hướng dẫn thi hành
+      Luật Quản lý thuế số 108/2025/QH15 về hóa đơn điện tử, chứng từ điện tử
+    document_number: "91/2026/TT-BTC"
+    issuer: "Bộ Tài chính"
+    document_type: Thông tư
+    issued_date: "2026-06-30"        # vbpl.vn, tab Thuộc tính
+    effective_date: "2026-07-01"     # vbpl.vn, tab Thuộc tính; khớp Điều 25 khoản 1 trong văn bản
+    status_at_access: "Còn hiệu lực (vbpl.vn, tab Thuộc tính, ngày hết hiệu lực: --)"
+    replaces: "Thông tư 32/2025/TT-BTC (Điều 25 khoản 2)"
+    source_path_or_url: "https://vbpl.vn/van-ban/chi-tiet/thong-tu-so-91-2026-tt-btc-quy-dinh-mot-so-dieu-cua-luat-quan-ly-thue-va-nghi-dinh-so-254-2026-nd-cp-cua-chinh-phu-quy-dinh-chi-tiet-mot-so-dieu-va-bien-phap-de-to-chuc-huong-dan-thi-hanh-luat-quan-ly-thue-so-108-2025-qh15-ve-hoa-don-dien-tu-chung-tu-dien-tu--8741d070-8037-11f1-8cce-cd2715c99e42"
+    local_file: "data/raw/Thông-tư-91-2026-TT-BTC.pdf"
+    sha256: "64917796b3c7f8b4bdd0b3bfdb6497475e89f7528e296c7abdeaec75a832d647"
+    file_bytes: 8390194
+    accessed_at: "2026-11-14"         # ngày tải file (thời gian sửa file trên máy: 2026-11-14 09:35)
+    license_or_permission: >-
+      Văn bản quy phạm pháp luật, công bố công khai trên Cơ sở dữ liệu quốc gia về pháp luật (vbpl.vn, Bộ Tư pháp).
+      Theo Luật Sở hữu trí tuệ, văn bản quy phạm pháp luật không thuộc đối tượng bảo hộ quyền tác giả.
+      Không chứa dữ liệu cá nhân. Điều khoản sử dụng riêng của vbpl.vn chưa được kiểm tra; tác giả cần xác nhận
+      trước khi commit file PDF gốc.
+    physical_pages: 97
+    text_layer: false                 # bản scan; pypdf không trích được chữ ở trang nào
+    ocr: "Tesseract 5.4.0.20240606, lang vie (tessdata), 300 dpi, psm 6; render bằng PyMuPDF 2.1; 248.9 s cho 97 trang"
+    ocr_output: "starter/results/pages_TT-91-2026.jsonl (log: starter/results/ocr_TT-91-2026.log)"
+    ocr_known_errors: >-
+      Sai dấu (thuê/thuế, đề/để, tô chức/tổ chức), số nhận thành ký hiệu (khoản §, Ì kênh), chữ hoa/thường (C)/c),
+      heading chương đọc sai (Chương H = II, Chương HỊ = III); phụ lục bảng biểu gần như không đọc được.
+    counted_pages: "1-32"
+    chars_total_all_pages: 158790     # sau OCR + chuẩn hóa NFC
+    chars_counted_pages: 72408
+    chars_per_counted_page:
+      1: 1775
+      2: 2053
+      3: 2138
+      4: 1980
+      5: 1740
+      6: 2211
+      7: 2427
+      8: 2619
+      9: 2560
+      10: 2261
+      11: 2119
+      12: 2482
+      13: 2460
+      14: 2401
+      15: 2234
+      16: 2357
+      17: 2377
+      18: 2579
+      19: 2382
+      20: 2482
+      21: 2483
+      22: 2432
+      23: 1909
+      24: 2283
+      25: 2099
+      26: 2130
+      27: 2260
+      28: 2218
+      29: 2343
+      30: 2038
+      31: 2342
+      32: 2234
+    excluded_pages:
+      "33": "Khoản cuối Điều 25 + Nơi nhận + chữ ký/con dấu; OCR nhiễu"
+      "34-97": "Phụ lục I-V: biểu mẫu/bảng; OCR nhiễu nhiều"
+    chapter_structure: "Chương I (Đ1-2, tr.1-2), II (Đ3-16, tr.3-28), III (Đ17-20, tr.28-30), IV (Đ21-23, tr.30-31), V (Đ24-25, tr.32)"
+
+# Văn bản đã xem xét nhưng không đưa vào corpus (kiểm tra trên vbpl.vn ngày 2026-11-14)
+excluded_candidates:
+  - document_number: "88/2015/QH13"
+    title: "Luật Kế toán"
+    reason: "Không dùng để giữ corpus một chủ đề (hóa đơn, chứng từ điện tử); có bản hợp nhất 41/VBHN-VPQH (2026)."
+  - document_number: "123/2020/NĐ-CP"
+    title: "Nghị định quy định về hóa đơn, chứng từ"
+    reason: "Hết hiệu lực toàn bộ từ 2026-07-01, thay bằng Nghị định 254/2026/NĐ-CP; PDF là bản scan."
+  - document_number: "78/2021/TT-BTC"
+    title: "Thông tư hướng dẫn Luật Quản lý thuế, Nghị định 123/2020/NĐ-CP"
+    reason: "Hết hiệu lực toàn bộ từ 2025-06-01, thay bằng Thông tư 32/2025/TT-BTC."
+  - document_number: "32/2025/TT-BTC"
+    title: "Thông tư hướng dẫn Luật Quản lý thuế, Nghị định 123/2020 và 70/2025"
+    reason: "Hết hiệu lực toàn bộ từ 2026-07-01, thay bằng Thông tư 91/2026/TT-BTC."

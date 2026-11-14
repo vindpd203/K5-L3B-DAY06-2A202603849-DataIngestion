@@ -8,3 +8,6 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 *.sqlite
+
+# Tesseract language data (download vie.traineddata from github.com/tesseract-ocr/tessdata)
+starter/tessdata/

@@ -1,0 +1,48 @@
+{
+  "split": "test",
+  "time_utc": "2026-11-14T03:42:27+00:00",
+  "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "chunkers": {
+    "A": "fixed 360/36",
+    "B": "paragraph max 360",
+    "C": "B + chapter filter when the question has one"
+  },
+  "summary": {
+    "A": {
+      "test": {
+        "N": 5,
+        "hit_at_1": 2,
+        "hit_at_3": 2,
+        "filter_N": 1,
+        "filter_ok": 0,
+        "hit_at_1_str": "2/5",
+        "hit_at_3_str": "2/5",
+        "filter_str": "0/1"
+      }
+    },
+    "B": {
+      "test": {
+        "N": 5,
+        "hit_at_1": 2,
+        "hit_at_3": 2,
+        "filter_N": 1,
+        "filter_ok": 0,
+        "hit_at_1_str": "2/5",
+        "hit_at_3_str": "2/5",
+        "filter_str": "0/1"
+      }
+    },
+    "C": {
+      "test": {
+        "N": 5,
+        "hit_at_1": 2,
+        "hit_at_3": 2,
+        "filter_N": 1,
+        "filter_ok": 1,
+        "hit_at_1_str": "2/5",
+        "hit_at_3_str": "2/5",
+        "filter_str": "1/1"
+      }
+    }
+  }
+}

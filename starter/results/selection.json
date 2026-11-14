@@ -1,0 +1,31 @@
+{
+  "decided_before_test": true,
+  "rule": "benchmark/README.md: 1) Evidence Hit@3 dev, 2) Hit@1 dev, 3) grounding thu cong, 4) tai nguyen",
+  "dev": {
+    "A": {
+      "hit_at_3": "8/15",
+      "hit_at_1": "6/15",
+      "filter": "0/2"
+    },
+    "B": {
+      "hit_at_3": "7/15",
+      "hit_at_1": "1/15",
+      "filter": "1/2"
+    },
+    "C": {
+      "hit_at_3": "8/15",
+      "hit_at_1": "2/15",
+      "filter": "2/2"
+    }
+  },
+  "step1_hit_at_3_tie": [
+    "A",
+    "C"
+  ],
+  "step2_hit_at_1": {
+    "A": 6,
+    "C": 2
+  },
+  "selected": "A",
+  "note": "Chon theo quy tac da chot; chua xem test. C co filter 2/2 nhung Hit@1 thap hon."
+}
