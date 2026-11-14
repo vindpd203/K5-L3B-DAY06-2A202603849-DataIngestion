@@ -1,12 +1,13 @@
 # Báo cáo cá nhân — Day 6
 
-**Học viên:** Phạm Đức Vinh · **MSSV:** 2A20260384 · **Lớp:** L3B · **Ngày:** 2026-11-14
+**Học viên:** Phạm Đức Vinh · **MSSV:** 2A202603849 · **Lớp:** L3B · **Ngày:** 2026-11-14
 
 ## Dữ liệu và pipeline
 
 - **Chủ đề, nguồn/quyền, số trang và quy tắc tính trang:** Hóa đơn điện tử, chứng từ điện tử. Corpus là một văn bản: Thông tư 91/2026/TT-BTC của Bộ Tài chính (ban hành 30/06/2026, hiệu lực 01/07/2026, còn hiệu lực khi truy cập 14/11/2026), tải từ vbpl.vn. Đây là văn bản quy phạm pháp luật công khai, không chứa dữ liệu cá nhân; điều khoản riêng của vbpl.vn chưa được kiểm tra. PDF có 97 trang vật lý, toàn bộ là bản scan. Tính **trang 1–32** (thân văn bản, Chương I–V, Điều 1–25) = **32 trang nội dung**, 72.408 ký tự sau OCR. Loại trang 33 (nơi nhận, chữ ký) và 34–97 (phụ lục biểu mẫu, OCR nhiễu). Chi tiết từng trang trong `data/manifest.yaml`. Trước khi chọn, đã kiểm tra và loại Nghị định 123/2020, Thông tư 78/2021 và 32/2025 vì đã hết hiệu lực.
 - **Chuẩn hóa, lỗi và giới hạn:** pypdf không trích được chữ ở trang nào, nên OCR bằng Tesseract 5.4 (`vie`, 300 dpi, psm 6), render trang bằng PyMuPDF. OCR mất 249 giây cho 97 trang. Bản Tesseract đi kèm PyMuPDF bị loại vì làm mất dấu cách sau chữ có dấu. Chuẩn hóa Unicode NFC, gộp khoảng trắng, giữ xuống dòng. Lỗi OCR còn lại: sai dấu (`thuê`/`thuế`, `tô chức`), số nhận thành ký hiệu (`khoản §`), heading chương đọc sai (`Chương H` = II). Evidence trong benchmark được chép nguyên văn từ text OCR, kể cả lỗi.
 - **Embedding, vector store, metric, lệnh chạy và chi phí:** `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` chạy local (sentence-transformers 6.3.0, torch 2.15.0+cpu), 384 chiều, chuẩn hóa L2, query và document xử lý giống nhau. Giới hạn đầu vào là 128 token. PostgreSQL 16.16 + pgvector 0.8.7 (Docker), metric cosine, **exact search** (không dùng index ANN). Chi phí: 0. Lệnh chạy ghi trong `README.md`.
+- **Kiểm tra nạp lại:** hai lần ingest liên tiếp (2026-11-14 03:34 và 03:35) cùng ghi 173 chunk A và 98 chunk B, `rows_in_db` bằng số chunk ở cả hai lần, không nhân đôi (`starter/results/ingest_log.jsonl`). Lần ingest 03:39 với cấu hình cuối (A 235, B 275) xóa 95 dòng B cũ của phiên bản 1000 ký tự (`deleted_obsolete = 95`).
 - **Metadata bắt buộc, trường lọc, nguồn giá trị và lý do chọn:** mỗi chunk có `document_id`, `source` (tên file PDF), `page` (trang vật lý 1-based), `pages` (các trang mà chunk trải qua). Trường lọc là `chapter` (text, I–V), cùng `article` (số nguyên). Giá trị `chapter` suy ra từ số Điều theo bảng Chương → Điều đã đối chiếu trên PDF, không đọc từ heading OCR vì OCR đọc sai. Chọn `chapter` vì văn bản có nội dung gần trùng giữa Chương II (hóa đơn) và Chương III (chứng từ), ví dụ cùng có quy định về định dạng XML và xử lý khi lập sai.
 
 ## Cấu hình và benchmark
@@ -26,9 +27,9 @@
 | A | dev | 6/15 | 8/15 | 235 | embed 6,74 s + ghi DB 0,13 s | 0 |
 | B | dev | 1/15 | 7/15 | 275 | embed 6,16 s + ghi DB 0,15 s | 0 |
 | C | dev | 2/15 | 8/15 | 275 (dùng của B) | như B | 0 |
-| A | test | 2/5 | 2/5 | 235 | | 0 |
-| B | test | 2/5 | 2/5 | 275 | | 0 |
-| C | test | 2/5 | 2/5 | 275 | | 0 |
+| A | test | 2/5 | 2/5 | 235 | tìm kiếm trung vị 27,9 ms/câu (n=5) | 0 |
+| B | test | 2/5 | 2/5 | 275 | tìm kiếm trung vị 22,2 ms/câu (n=5) | 0 |
+| C | test | 2/5 | 2/5 | 275 | tìm kiếm trung vị 22,6 ms/câu (n=5) | 0 |
 
 Thời gian chung: tải model 10,7 s; OCR 249 s (một lần cho cả 3 cấu hình); truy vấn trung vị 29 ms/câu (exact search, CPU).
 
@@ -42,7 +43,7 @@ Thời gian chung: tải model 10,7 s; OCR 249 s (một lần cho cả 3 cấu h
 
 ## Phân tích và kết luận
 
-- **So sánh A–B (chỉ đổi chunking):**
+- **So sánh A–B (không phải thay đúng một yếu tố):** B đổi đồng thời chunking, overlap (36 → 0) và cách gán `article`/`chapter` (theo vị trí đầu chunk → chính xác từng chunk). Kết quả A–B vì vậy là tác động tổng hợp của ba thay đổi, không cô lập được riêng chunking.
   - **Coherence:** B tốt hơn rõ (1,3 so với 0,7). A cắt giữa từ ở hầu hết vị trí. Ở pos06, A mất cụm "không thuộc trường hợp", nên đoạn đọc lên thành ngược nghĩa.
   - **Metadata:** B đúng 15/15, A 13/15. Hai lỗi của A là chunk vắt qua tiêu đề chương mới: t04 hạng 3 bị gắn Điều 2/Chương I thay vì Điều 3/Chương II; t05 hạng 2 bị gắn Điều 20/Chương III thay vì Điều 21/Chương IV.
   - **Truy xuất:** gần như hòa ở Hit@3 (dev 8 so với 7, test 2 so với 2), nhưng A hơn hẳn ở Hit@1 dev (6 so với 1). Trong 6 câu dev mà B xếp chunk đúng ở hạng 2–3, có 5 câu mà chunk hạng 1 là một khoản/điểm **cùng Điều**, điểm số chỉ chênh 0,005–0,08 (ví dụ d03, d13). B tìm đúng Điều nhưng tách Điều thành nhiều chunk ngắn tương tự nhau mà không có tiêu đề.
@@ -67,7 +68,11 @@ Thời gian chung: tải model 10,7 s; OCR 249 s (một lần cho cả 3 cấu h
 
 ## Công cụ và cách kiểm tra
 
-Tác giả (Phạm Đức Vinh) trực tiếp đọc đề, viết code pipeline, soạn benchmark và thực hiện dán nhãn audit. Cách kiểm tra:
+Tác giả (Phạm Đức Vinh) trực tiếp đọc đề, viết code pipeline, soạn benchmark và thực hiện dán nhãn audit.
+
+**Công cụ AI:** Claude Code (model Haiku 5.5). Trong các phiên rà soát và sửa tài liệu nộp bài, AI đã đọc và đối chiếu SUBMISSION, RULES, RUBRIC, CHECKPOINTS với cấu trúc repo; chạy lệnh kiểm tra evidence; sửa STUDENT.md, báo cáo và ghi chú `artifacts/experiment_log.csv`. Mọi số liệu trong báo cáo lấy từ file kết quả hoặc lệnh đã chạy, không do AI ước lượng. Việc AI có hỗ trợ viết code pipeline và benchmark hay không: [tác giả xác nhận trước khi nộp].
+
+Cách kiểm tra:
 - Selftest cho `ingestion`, `chunking`, `evaluation`.
 - Lệnh `--verify` cho evidence của benchmark.
 - Đối chiếu benchmark với ảnh PDF.

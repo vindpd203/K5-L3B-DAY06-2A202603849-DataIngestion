@@ -2,7 +2,11 @@
 
 > ## Bài làm: Thông tư 91/2026/TT-BTC (hóa đơn điện tử, chứng từ điện tử)
 >
-> Corpus: 1 văn bản scan, OCR 97 trang, dùng trang 1–32 (32 trang nội dung). Nguồn, quyền và cách đếm trang: [data/manifest.yaml](data/manifest.yaml). Benchmark 20 câu (15 dev / 5 test): [benchmark/](benchmark/README.md). Cấu hình A/B/C và kết quả: [artifacts/experiment_log.csv](artifacts/experiment_log.csv). Phần đề bài gốc nằm bên dưới.
+> Corpus: 1 văn bản scan, OCR 97 trang, dùng trang 1–32 (32 trang nội dung). Nguồn, quyền và cách đếm trang: [starter/data/manifest.yaml](starter/data/manifest.yaml). Benchmark 20 câu (15 dev / 5 test): [benchmark/](benchmark/README.md). Cấu hình A/B/C và kết quả: [artifacts/experiment_log.csv](artifacts/experiment_log.csv). Phần đề bài gốc nằm bên dưới.
+>
+> **Ánh xạ đường dẫn:** code, dữ liệu và kết quả nằm trong `starter/` (`starter/src/`, `starter/data/manifest.yaml`, `starter/results/`), tương ứng với `src/`, `data/manifest.*` và `results/` trong [SUBMISSION.md](SUBMISSION.md). Code chạy từ thư mục `starter/`.
+>
+
 >
 > | Thành phần | Lựa chọn |
 > |---|---|

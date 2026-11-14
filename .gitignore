@@ -11,3 +11,6 @@ __pycache__/
 
 # Tesseract language data (download vie.traineddata from github.com/tesseract-ocr/tessdata)
 starter/tessdata/
+
+# PDF gốc chưa xác nhận quyền tái phân phối (xem data/manifest.yaml); tải lại theo manifest, kiểm sha256
+starter/data/raw/
